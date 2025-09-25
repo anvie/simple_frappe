@@ -35,7 +35,7 @@ services:
         target: /var/lib/mysql
         volume: {}
 
-  erp:
+  frappe:
     build:
       context: .
     depends_on:
