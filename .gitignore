@@ -1,0 +1,15 @@
+**/sites/frontend
+
+**/node_modules
+**/site-packages
+**/__pycache__
+
+
+# Environment Variables
+.env
+
+.DS_Store
+
+frappe-bench/sites
+frappe-bench/env
+frappe-bench/apps/*

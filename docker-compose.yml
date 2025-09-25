@@ -1,0 +1,115 @@
+name: frappe_docker
+
+x-common-environment: &common-environment
+  MYSQL_ROOT_PASSWORD: admin
+  ADMIN_PASSWORD: admin
+  SITE_NAME: frontend
+  DB_HOST: db
+  DB_PORT: "3306"
+  REDIS_CACHE: redis-cache:6379
+  REDIS_QUEUE: redis-queue:6379
+  SOCKETIO_PORT: "9000"
+
+services:
+  db:
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --skip-character-set-client-handshake
+      - --skip-innodb-read-only-compressed
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - mysqladmin ping -h localhost --password=admin
+      interval: 1s
+      retries: 20
+    image: mariadb:10.6
+    networks:
+      default: null
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: db-data
+        target: /var/lib/mysql
+        volume: {}
+
+  erp:
+    build:
+      context: .
+    depends_on:
+      db:
+        condition: service_healthy
+      redis-cache:
+        condition: service_healthy
+      redis-queue:
+        condition: service_healthy
+    pull_policy: always
+    restart: unless-stopped
+    command: bash -c "prepare.sh && supervisord && sleep 3 && tail -f /var/log/*.log"
+    networks:
+      default: null
+    environment:
+      <<: *common-environment
+    volumes:
+      - ${FRAPPE_BENCH_PATH:-./frappe-bench}/apps:/home/frappe/frappe-bench/apps
+      - ${FRAPPE_BENCH_PATH:-./frappe-bench}/sites:/home/frappe/frappe-bench/sites
+      - ${FRAPPE_BENCH_PATH:-./frappe-bench}/sites/assets:/home/frappe/frappe-bench/sites/assets
+      - frappe:/home/frappe/frappe-bench/apps/frappe
+      #- erpnext:/home/frappe/frappe-bench/apps/erpnext
+      - logs:/var/log
+    ports:
+      - "8080:8080"
+      - "8000:8000"
+      - "222:22"
+
+  redis-cache:
+    image: redis:6.2-alpine
+    networks:
+      default: null
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - redis-cli ping
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  redis-queue:
+    image: redis:6.2-alpine
+    networks:
+      default: null
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - redis-cli ping
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    volumes:
+      - type: volume
+        source: redis-queue-data
+        target: /data
+        volume: {}
+
+networks:
+  default:
+    name: frappe_docker_default
+
+volumes:
+  db-data:
+    name: frappe_docker_db-data
+  redis-queue-data:
+    name: frappe_docker_redis-queue-data
+  redis-data:
+    name: frappe_docker_redis-data
+  logs:
+    name: frappe_docker_logs
+  site-packages:
+  frappe:
+    name: frappe_docker_frape-data
+  # erpnext:
+  #   name: frappe_docker_erpnext-data

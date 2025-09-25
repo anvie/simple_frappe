@@ -1,0 +1,20 @@
+   _____ ____  ____  _   _           _   
+  | ____|  _ \|  _ \| \ | | _____  _| |_ 
+  |  _| | |_) | |_) |  \| |/ _ \ \/ / __|
+  | |___|  _ <|  __/| |\  |  __/>  <| |_ 
+  |_____|_| \_\_|   |_| \_|\___/_/\_\\__|
+
+|--------------------------------------------|
+
+Repackaged by: Robin Syihab (robin@syihab.st)
+
+
+Helper Commands:
+
+- sup status - check service status.
+- sup restart [service] - restart a service.
+- tail_all - tail all logs.
+- tail_backend - tail backend logs.
+- tail_nginx - tail nginx logs.
+
+.
