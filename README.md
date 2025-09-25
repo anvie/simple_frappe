@@ -1,36 +1,41 @@
 # Simple Frappe Docker
 
-Simplified version of the official Frappe Docker setup.
+A streamlined Docker setup for Frappe based app development, simplifying the official Frappe Docker configuration for faster local development.
 
-## How to use
+## Quick Start
 
-Run docker compose to start:
+Start the Frappe environment with Docker Compose:
 
 ```bash
 docker compose up -d
 ```
 
-## Install Frappe Apps
+**Access the application:**
 
-there are two ways to install apps:
+- Web Interface: http://localhost:8080
+- Default User: `Administrator`
+- Default Password: `admin`
 
-### 1. Predefined Apps
+## Installing Frappe Apps
 
-When run with `docker compose up -d` the first time, it will install the apps
-in `frappe-bench/apps`, so you can simply clone your apps there before starting the containers.
+You can install Frappe applications using two methods:
 
-Example, for ERPNext version 15:
+### Method 1: Pre-installation (Recommended)
+
+Clone your apps into `frappe-bench/apps` before starting the containers. They will be automatically detected and installed during the first run.
+
+**Example - Installing ERPNext v15:**
 
 ```bash
 cd frappe-bench/apps
 git clone -b version-15 https://github.com/frappe/erpnext.git
 ```
 
-### 2. Install Apps Manually
+### Method 2: Post-installation
 
-After starting the containers, you can enter the `frappe` container and use the `bench` command to install apps.
+Install apps after the containers are running using the `bench` command inside the container.
 
-Example:
+**Example:**
 
 ```bash
 docker compose exec frappe bash
@@ -39,11 +44,49 @@ bench get-app erpnext --branch version-15
 bench --site frontend install-app erpnext
 ```
 
-## Development
+## Development Environment
 
-The `apps` dir and `sites` dir are mounted as volumes in current directory, so
-you can easily develop your own apps on your host machine and test them in the container.
+### Volume Mounts
 
-See `docker-compose.yml` for more details.
+The following directories are mounted as volumes for seamless development:
+
+- `frappe-bench/apps` - Your Frappe applications
+- `frappe-bench/sites` - Site configurations and data
+
+Changes made to files in these directories on your host machine are immediately reflected in the container.
+
+### Container Architecture
+
+This setup includes:
+
+- **Frappe** container with Frappe v15 framework
+- **MariaDB 10.6** for database
+- **Redis** instances for caching and queue management
+- **Supervisor** for process management
+
+### Useful Commands
+
+```bash
+# View container logs
+docker compose logs -f frappe
+
+# Access container shell
+docker compose exec frappe bash
+
+# Stop containers
+docker compose down
+
+# Stop and remove volumes (careful - deletes data)
+docker compose down -v
+```
+
+### Ports
+
+- `8080` - Web interface (Nginx)
+- `8000` - Frappe backend server
+
+For detailed configuration, see `docker-compose.yml`.
+
+---
 
 [] Robin Syihab

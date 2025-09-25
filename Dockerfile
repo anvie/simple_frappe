@@ -10,7 +10,6 @@ RUN apt-get update \
     && apt-get install -y gnupg2 \
     && apt-get install -y rsync \
     && apt-get install -y supervisor \
-    && mkdir -p /root/.ssh \
     && chown -R frappe:frappe /home/frappe
 
 FROM base AS frappe
