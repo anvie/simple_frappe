@@ -64,6 +64,23 @@ This setup includes:
 - **Redis** instances for caching and queue management
 - **Supervisor** for process management
 
+### bench.sh Helper Script
+
+A convenient wrapper script is provided to run bench commands directly from your host machine without needing to enter the container:
+
+```bash
+# Make the script executable (first time only)
+chmod +x bench.sh
+
+# Run any bench command from the host
+./bench.sh --help
+./bench.sh --site frontend list-apps
+./bench.sh get-app lms
+./bench.sh --site frontend install-app lms
+```
+
+The script automatically checks if the Frappe container is running and executes bench commands inside the container.
+
 ### Useful Commands
 
 ```bash
