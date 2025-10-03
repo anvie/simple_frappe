@@ -56,13 +56,15 @@ services:
       - ${FRAPPE_BENCH_PATH:-./frappe-bench}/apps:/home/frappe/frappe-bench/apps
       - ${FRAPPE_BENCH_PATH:-./frappe-bench}/sites:/home/frappe/frappe-bench/sites
       - ${FRAPPE_BENCH_PATH:-./frappe-bench}/sites/assets:/home/frappe/frappe-bench/sites/assets
+      - frappe_home:/home/frappe
       - frappe:/home/frappe/frappe-bench/apps/frappe
       #- erpnext:/home/frappe/frappe-bench/apps/erpnext
       - logs:/var/log
     ports:
-      - "8080:8080"
-      - "8000:8000"
-      - "222:22"
+      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:8000:8000"
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:222:22"
 
   redis-cache:
     image: redis:6.2-alpine
@@ -110,6 +112,8 @@ volumes:
     name: frappe_docker_logs
   site-packages:
   frappe:
-    name: frappe_docker_frape-data
+    name: frappe_docker_frappe-data
+  frappe_home:
+    name: frappe_docker_frappe-home
   # erpnext:
   #   name: frappe_docker_erpnext-data
